@@ -1,3 +1,12 @@
+#
+#Seuraavat jutut:
+#- Napeille funktionaalisuus,
+#  joka säätää preset arvojen mukaan kirkkauden ja värin
+#- Sensoreiden yms. säädöt
+#
+#
+#
+
 import tkinter as tk
 import customtkinter as ctk
 import math
@@ -5,15 +14,16 @@ import math
 KVArvo = 40
 HVArvo = 20
 AkkuArvo = 12.75
+SLampo = 22
+ULampo = 3
 OletusValonvari = "#ffffff" # voiko tähän laittaa jonkun systeemimuuttujan tms., jotta saisi sen pidettyä muistissa?
-OletusValonK = 0
-# try: OletusValonvari
-# except NameError: OletusValonvari = "#ffffff"
+OletusKelvin = 6500 # ja sama tähän?
+OletusKirkkaus = 50 # ja vielä tähän?
     
 def rgb2hex(r,g,b):
     return "#{:02x}{:02x}{:02x}".format(r,g,b)
 
-def vaihda_vari(t):
+def vaihdaVari(t):
     temperature = t/100
 
 #     Calculate red:
@@ -62,7 +72,12 @@ def vaihda_vari(t):
                 
 #     Change RGB-value for color_box and variable:
     color_box.configure(fg_color = rgb2hex(int(red),int(green),int(blue)))
-    colorLabel.configure(text=int(t))
+    KelvinLabel.configure(text=str(int(t)) + " K")
+    #tähän tulee funktio, joka säätää värin oikeasti
+    
+def vaihdaKirkkaus(kirkkaus):
+    print(str(kirkkaus))
+    #tähän tulee funktio joka säätää kirkkauden oikeasti
 
 
 ctk.set_appearance_mode("dark")
@@ -92,14 +107,47 @@ AkkuV.place(relx=0.1, rely=0.55)
 AkkuArvo = ctk.CTkLabel(window, text=str(AkkuArvo) + " V")
 AkkuArvo.place(relx=0.25, rely=0.55)
 
-slider = ctk.CTkSlider(window, from_=3000, to=10000, command=vaihda_vari)
-slider.place(relx=0.7, rely=0.3)
+UlkoLampo = ctk.CTkLabel(window, text="Ulkolämpötila:")
+UlkoLampo.place(relx=0.1, rely=0.65)
+ULampoArvo = ctk.CTkLabel(window, text=str(ULampo) + " °C")
+ULampoArvo.place(relx=0.25, rely=0.65)
 
-colorLabel = ctk.CTkLabel(window, text=OletusValonK)
-colorLabel.place(relx=0.7, rely=0.35)
+SisaLampo = ctk.CTkLabel(window, text="Sisälämpötila:")
+SisaLampo.place(relx=0.1, rely=0.75)
+SLampoArvo = ctk.CTkLabel(window, text=str(SLampo) + " °C")
+SLampoArvo.place(relx=0.25, rely=0.75)
 
-color_box = ctk.CTkButton(window, width=100, height=100, fg_color=OletusValonvari)
-color_box.place(relx=0.7, rely=0.6)
+valotext = ctk.CTkLabel(window, text="Valot", font=("default", 16))
+valotext.place(relx=0.68, rely=0.25, anchor=tk.CENTER)
+
+ValotVirta = ctk.CTkButton(window, text="OFF", height=60, width=80)
+ValotVirta.place(relx=0.5, rely=0.40, anchor=tk.CENTER)
+
+ValotVirta = ctk.CTkButton(window, text="Lämmin", height=60, width=80)
+ValotVirta.place(relx=0.62, rely=0.40, anchor=tk.CENTER)
+
+ValotVirta = ctk.CTkButton(window, text="Perus", height=60, width=80)
+ValotVirta.place(relx=0.74, rely=0.40, anchor=tk.CENTER)
+
+ValotVirta = ctk.CTkButton(window, text="Kylmä", height=60, width=80)
+ValotVirta.place(relx=0.86, rely=0.40, anchor=tk.CENTER)
+
+KelvinSlider = ctk.CTkSlider(window, from_=3000, to=10000, command=vaihdaVari, width=350)
+KelvinSlider.set(OletusKelvin)
+KelvinSlider.place(relx=0.68, rely=0.6, anchor=tk.CENTER)
+
+KelvinLabel = ctk.CTkLabel(window, text=str(OletusKelvin) + " K", height=8)
+KelvinLabel.place(relx=0.68, rely=0.65, anchor=tk.CENTER)
+
+KirkkausSlider = ctk.CTkSlider(window, from_=0, to=100, command=vaihdaKirkkaus, width=350)
+KirkkausSlider.set(OletusKirkkaus)
+KirkkausSlider.place(relx=0.68, rely=0.75, anchor=tk.CENTER)
+
+KirkkausLabel = ctk.CTkLabel(window, text=str(OletusKirkkaus) + " %", height=8)
+KirkkausLabel.place(relx=0.68, rely=0.8, anchor=tk.CENTER)
+
+color_box = ctk.CTkButton(window, width=100, height=50, fg_color=OletusValonvari, text="Valojen testiboxi")
+color_box.place(relx=0.9, rely=0.1, anchor=tk.CENTER)
 
 
 window.mainloop()
